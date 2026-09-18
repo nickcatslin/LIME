@@ -41,9 +41,13 @@ public class EmbedOptions implements IHook {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        ViewGroup viewGroup = ((ViewGroup) param.args[0]);
-                        Context context = viewGroup.getContext();
-                        viewGroup = (ViewGroup) viewGroup.findViewById(context.getResources().getIdentifier("header_root", "id", context.getPackageName()));
+                        ViewGroup root = ((ViewGroup) param.args[0]);
+                        Context context = root.getContext();
+                        // LINE 15+/26 settings screen dropped "header_root"; anchor on the settings
+                        // list (falls back to the fragment root) so the LIME button still appears.
+                        int anchorId = context.getResources().getIdentifier("setting_list", "id", context.getPackageName());
+                        View anchor = anchorId != 0 ? root.findViewById(anchorId) : null;
+                        if (anchor == null) anchor = root;
                         Utils.addModuleAssetPath(context);
 
                         SharedPreferences prefs = context.getSharedPreferences(Constants.MODULE_NAME + "-options", Context.MODE_PRIVATE);
@@ -383,17 +387,24 @@ public class EmbedOptions implements IHook {
                             }
                         });
 
-                        FrameLayout frameLayout = new FrameLayout(context);
-                        frameLayout.setLayoutParams(new ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT));
-
-                        ViewGroup parent = (ViewGroup) viewGroup.getParent();
-                        parent.removeView(viewGroup);
-                        parent.addView(frameLayout);
-                        frameLayout.addView(viewGroup);
-
-                        frameLayout.addView(button);
+                        ViewGroup anchorParent = (ViewGroup) anchor.getParent();
+                        if (anchorParent != null) {
+                            // Wrap the anchor in a FrameLayout (reusing its LayoutParams so it keeps
+                            // its slot in the parent) and overlay the LIME button at the bottom-end.
+                            int index = anchorParent.indexOfChild(anchor);
+                            ViewGroup.LayoutParams anchorLp = anchor.getLayoutParams();
+                            anchorParent.removeView(anchor);
+                            FrameLayout frameLayout = new FrameLayout(context);
+                            frameLayout.setLayoutParams(anchorLp);
+                            anchorParent.addView(frameLayout, index);
+                            frameLayout.addView(anchor, new FrameLayout.LayoutParams(
+                                    FrameLayout.LayoutParams.MATCH_PARENT,
+                                    FrameLayout.LayoutParams.MATCH_PARENT));
+                            frameLayout.addView(button);
+                        } else {
+                            // Fallback: no wrappable parent (layout changed again) — add directly.
+                            root.addView(button);
+                        }
                     }
                 }
         );

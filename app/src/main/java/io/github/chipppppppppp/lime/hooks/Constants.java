@@ -14,12 +14,26 @@ public class Constants {
         }
     }
 
-    static final HookTarget USER_AGENT_HOOK = new HookTarget("Sg1.c", "j");
-    static final HookTarget WEBVIEW_CLIENT_HOOK = new HookTarget("FO0.l", "onPageFinished");
-    static final HookTarget MUTE_MESSAGE_HOOK = new HookTarget("Lf1.b", "I");
-    static final HookTarget MARK_AS_READ_HOOK = new HookTarget("KO.d$d", "run");
-    static final HookTarget ARCHIVE_HOOK = new HookTarget("tB.P", "invokeSuspend");
-    static final HookTarget NOTIFICATION_READ_HOOK = new HookTarget("mh1.b", "invokeSuspend");
-    static final HookTarget REQUEST_HOOK = new HookTarget("org.apache.thrift.l", "b");
-    static final HookTarget RESPONSE_HOOK = new HookTarget("org.apache.thrift.l", "a");
+    // Hook targets for LINE 26.14.0 (versionCode 261400121).
+    // Obfuscated names change on every LINE release; re-locate them with jadx when updating.
+
+    // lf8.d#i(Context): builds the "ANDROID\t<ver>\tAndroid OS\t<os>" application string
+    static final HookTarget USER_AGENT_HOOK = new HookTarget("lf8.d", "i");
+    // qn2.v0: WebViewClientCompat used by the in-app browser (IabWebViewCallbackImpl)
+    static final HookTarget WEBVIEW_CLIENT_HOOK = new HookTarget("qn2.v0", "onPageFinished");
+    // ig8.e1#a(ed8.b metadata, na8.f muteType): writes the mute flag into outgoing message metadata
+    static final HookTarget MUTE_MESSAGE_HOOK = new HookTarget("ig8.e1", "a");
+    // na3.e$d#run(): Runnable that sends sendChatChecked for a chat
+    static final HookTarget MARK_AS_READ_HOOK = new HookTarget("na3.e$d", "run");
+    // MainChatDataManager$getUnarchivedChatDataListOrderedByLastMessage$2#invokeSuspend
+    static final HookTarget ARCHIVE_HOOK = new HookTarget("u83.c1", "invokeSuspend");
+    // jg8.y1#b(r0, Operation, Continuation): receive-operation handler for NOTIFIED_READ_MESSAGE
+    static final HookTarget NOTIFICATION_READ_HOOK = new HookTarget("jg8.y1", "b");
+    // org.apache.thrift.n: TServiceClient; b = sendBase(name, args), a = receiveBase(name, result)
+    static final HookTarget REQUEST_HOOK = new HookTarget("org.apache.thrift.n", "b");
+    static final HookTarget RESPONSE_HOOK = new HookTarget("org.apache.thrift.n", "a");
+
+    // Non-obfuscated classes that moved packages between releases
+    static final String IN_APP_BROWSER_ACTIVITY = "com.linecorp.line.iab.browser.impl.InAppBrowserActivity";
+    static final String WELCOME_FRAGMENT = "com.linecorp.line.registration.ui.fragment.WelcomeFragment";
 }
