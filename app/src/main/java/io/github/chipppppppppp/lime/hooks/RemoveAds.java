@@ -31,7 +31,12 @@ public class RemoveAds implements IHook {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         String request = param.args[0].toString();
                         if (request.equals("getBanners") || request.equals("getPrefetchableBanners")) {
-                            param.setResult(null);
+                            // These calls go through the OkHttp-backed Thrift transport, where sendBase is
+                            // invoked lazily while serializing the request body. Returning null here would
+                            // still send an empty POST to the ad server; failing instead makes the body
+                            // serializer throw a ProtocolException so OkHttp aborts before sending anything.
+                            // The caller already treats that as a failed (empty) banner response.
+                            param.setThrowable(new IllegalStateException("Blocked by LIME: " + request));
                         }
                     }
                 }
