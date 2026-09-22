@@ -43,8 +43,7 @@ public class RemoveGcsModules implements IHook {
                     loadPackageParam.classLoader.loadClass(Constants.GCS_EMPTY_MODULE.className),
                     Constants.GCS_EMPTY_MODULE.methodName
             );
-        } catch (Throwable t) {
-            XposedBridge.log("LIME: GCS empty module result not found, skipping: " + t);
+        } catch (Throwable ignored) {
             return;
         }
 
@@ -68,8 +67,7 @@ public class RemoveGcsModules implements IHook {
                         target.methodName,
                         replaceWithEmptyModule
                 );
-            } catch (Throwable t) {
-                XposedBridge.log("LIME: GCS module factory " + target.className + " not found, skipping: " + t);
+            } catch (Throwable ignored) {
             }
         }
     }

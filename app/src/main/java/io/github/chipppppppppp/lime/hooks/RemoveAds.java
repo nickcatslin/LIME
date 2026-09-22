@@ -91,8 +91,7 @@ public class RemoveAds implements IHook {
                         }
                     }
             );
-        } catch (Throwable t) {
-            XposedBridge.log("LIME: LyadAdView not found, skipping: " + t);
+        } catch (Throwable ignored) {
         }
 
         XposedHelpers.findAndHookMethod(
@@ -186,8 +185,7 @@ public class RemoveAds implements IHook {
             factoryClass = loadPackageParam.classLoader.loadClass(MINOR_REGION_AD_FACTORY);
             continuationClass = loadPackageParam.classLoader.loadClass("kotlin.coroutines.Continuation");
             unit = XposedHelpers.getStaticObjectField(loadPackageParam.classLoader.loadClass("kotlin.Unit"), "INSTANCE");
-        } catch (Throwable t) {
-            XposedBridge.log("LIME: minor region ad factory not found, skipping: " + t);
+        } catch (Throwable ignored) {
             return;
         }
 
