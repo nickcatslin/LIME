@@ -1,13 +1,19 @@
 package io.github.chipppppppppp.lime.hooks;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -137,5 +143,93 @@ public class RemoveAds implements IHook {
                     }
                 }
         );
+
+        hookMinorRegionAds(loadPackageParam);
+    }
+
+    // Google Ad Manager banners shown outside Japan ("minor region" ads): the top banner on the
+    // home tab (home_tab_top_banner_row) and the chat list header (chat_tab_google_ad). They do not
+    // go through the LINE Ads SDK, so none of the hooks above catch them.
+    //
+    // Only the component factory has a stable name. It returns a view-controller factory whose
+    // single method takes the ad container ViewGroup and returns the controller; the controller's
+    // single suspend method loads an ad into that container. Everything below is resolved at
+    // runtime from the objects those calls return, so obfuscated names do not matter.
+    private static final String MINOR_REGION_AD_FACTORY =
+            "com.linecorp.line.minor.region.ad.impl.viewcontroller.DelegatedMinorRegionAdViewControllerFactory";
+
+    private void hookMinorRegionAds(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        Class<?> factoryClass;
+        Class<?> continuationClass;
+        Object unit;
+        try {
+            factoryClass = loadPackageParam.classLoader.loadClass(MINOR_REGION_AD_FACTORY);
+            continuationClass = loadPackageParam.classLoader.loadClass("kotlin.coroutines.Continuation");
+            unit = XposedHelpers.getStaticObjectField(loadPackageParam.classLoader.loadClass("kotlin.Unit"), "INSTANCE");
+        } catch (Throwable t) {
+            XposedBridge.log("LIME: minor region ad factory not found, skipping: " + t);
+            return;
+        }
+
+        Set<Class<?>> hookedClasses = new HashSet<>();
+
+        XposedHelpers.findAndHookMethod(factoryClass, "createComponent", Context.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                Object controllerFactory = param.getResult();
+                if (controllerFactory == null || !hookedClasses.add(controllerFactory.getClass())) return;
+
+                for (Method method : controllerFactory.getClass().getDeclaredMethods()) {
+                    Class<?>[] params = method.getParameterTypes();
+                    if (method.isSynthetic() || Modifier.isStatic(method.getModifiers())) continue;
+                    if (params.length != 1 || !ViewGroup.class.isAssignableFrom(params[0])) continue;
+
+                    XposedBridge.hookMethod(method, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            hideAdContainer((ViewGroup) param.args[0]);
+
+                            Object controller = param.getResult();
+                            if (controller == null || !hookedClasses.add(controller.getClass())) return;
+
+                            for (Method loadMethod : controller.getClass().getDeclaredMethods()) {
+                                Class<?>[] loadParams = loadMethod.getParameterTypes();
+                                if (loadMethod.isSynthetic() || Modifier.isStatic(loadMethod.getModifiers())) continue;
+                                if (loadParams.length == 0 || !continuationClass.isAssignableFrom(loadParams[loadParams.length - 1])) continue;
+
+                                XposedBridge.hookMethod(loadMethod, new XC_MethodHook() {
+                                    @Override
+                                    protected void beforeHookedMethod(MethodHookParam param) {
+                                        for (Field field : param.thisObject.getClass().getDeclaredFields()) {
+                                            if (!ViewGroup.class.isAssignableFrom(field.getType())) continue;
+                                            field.setAccessible(true);
+                                            try {
+                                                hideAdContainer((ViewGroup) field.get(param.thisObject));
+                                            } catch (IllegalAccessException ignored) {
+                                            }
+                                        }
+                                        // Complete the suspend function immediately without requesting an ad.
+                                        param.setResult(unit);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private static void hideAdContainer(ViewGroup container) {
+        if (container == null) return;
+        container.setVisibility(View.GONE);
+        // The chat list wraps the container in a padded FrameLayout of its own; collapse that too.
+        // The home tab row holds other banners next to the container, so leave multi-child parents alone.
+        if (container.getParent() instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) container.getParent();
+            if (parent.getChildCount() == 1) {
+                parent.setVisibility(View.GONE);
+            }
+        }
     }
 }
