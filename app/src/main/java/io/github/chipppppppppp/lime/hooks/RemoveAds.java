@@ -75,6 +75,26 @@ public class RemoveAds implements IHook {
                 }
         );
 
+        // LINE Ads SDK v2 (LyadAdView). LINE 26.x renders the GCS ad modules with it: the home tab
+        // "gcs_ad_section" card, the chat list / OpenChat tab GCS ads, album, calendar and note ads.
+        // The view is the root of every ladsdk_*v2*/gcs_* layout and is wrapped in a FrameLayout
+        // that the module drops into its section container, so collapsing the single-child chain
+        // above it removes the whole module without touching containers shared with other content.
+        try {
+            XposedHelpers.findAndHookMethod(
+                    loadPackageParam.classLoader.loadClass("com.linecorp.line.ladsdk.ui.v2.common.lifecycle.LyadAdView"),
+                    "onAttachedToWindow",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            collapseAdView((View) param.thisObject);
+                        }
+                    }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("LIME: LyadAdView not found, skipping: " + t);
+        }
+
         XposedHelpers.findAndHookMethod(
                 ViewGroup.class,
                 "addView",
@@ -218,6 +238,27 @@ public class RemoveAds implements IHook {
                 }
             }
         });
+    }
+
+    // Hides an ad view and every ancestor that exists only to hold it (wrapper FrameLayouts, the
+    // module's section container), so wrap_content parents collapse to zero height. Stops at the
+    // first ancestor that also holds other children, and never touches Compose-managed views.
+    private static void collapseAdView(View adView) {
+        View view = adView;
+        while (view != null) {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            if (layoutParams != null) {
+                layoutParams.height = 0;
+                view.setLayoutParams(layoutParams);
+            }
+            view.setVisibility(View.GONE);
+
+            if (!(view.getParent() instanceof ViewGroup)) return;
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent.getChildCount() != 1) return;
+            if (parent.getClass().getName().startsWith("androidx.compose.")) return;
+            view = parent;
+        }
     }
 
     private static void hideAdContainer(ViewGroup container) {
