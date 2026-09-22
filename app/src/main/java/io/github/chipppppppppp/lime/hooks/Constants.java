@@ -40,8 +40,9 @@ public class Constants {
     static final HookTarget GCS_FLEX_MODULE_HOOK = new HookTarget("q92.n", "a");
     // ob2.l: za2.j wrapper around every View-based fb2.b module (instantiated in jb2.g2)
     static final HookTarget GCS_VIEW_MODULE_HOOK = new HookTarget("ob2.l", "a");
-    // za2.h#f393361e: static "empty module" result (za2.h.a.b(null, new za2.g(), 3)), the value ob2.c0 returns for unknown modules
-    static final HookTarget GCS_EMPTY_MODULE = new HookTarget("za2.h", "f393361e");
+    // za2.h#e: static "empty module" result (za2.h.a.b(null, new za2.g(), 3)), the value ob2.c0 returns
+    // for unknown modules. jadx displays this field as f393361e ("renamed from: e"); use the real dex name.
+    static final HookTarget GCS_EMPTY_MODULE = new HookTarget("za2.h", "e");
 
     // Non-obfuscated classes that moved packages between releases
     static final String IN_APP_BROWSER_ACTIVITY = "com.linecorp.line.iab.browser.impl.InAppBrowserActivity";
