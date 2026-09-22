@@ -5,6 +5,9 @@ name: Build release APK (fork)
 # It does NOT create a GitHub Release or publish anywhere.
 
 on:
+  push:
+    branches:
+      - ci-release-build
   workflow_dispatch:
     inputs:
       ref:
@@ -21,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || 'support-line-26.14.0' }}
 
       - name: Set environments
         run: |
