@@ -33,6 +33,16 @@ public class Constants {
     static final HookTarget REQUEST_HOOK = new HookTarget("org.apache.thrift.n", "b");
     static final HookTarget RESPONSE_HOOK = new HookTarget("org.apache.thrift.n", "a");
 
+    // Compose-hosted GCS home tab modules (see RemoveGcsModules). Anchors: module types implement
+    // y82.k0 with getType() returning "FLEX", "AdModel", "HomePerformanceAd"; factories extend the
+    // abstract za2.j and implement a(String, y82.k0, jb2.q, h3.s) returning za2.h.
+    // q92.n: za2.j<y82.k0.f> (FLEX, GcsFlexContents)
+    static final HookTarget GCS_FLEX_MODULE_HOOK = new HookTarget("q92.n", "a");
+    // ob2.l: za2.j wrapper around every View-based fb2.b module (instantiated in jb2.g2)
+    static final HookTarget GCS_VIEW_MODULE_HOOK = new HookTarget("ob2.l", "a");
+    // za2.h#f393361e: static "empty module" result (za2.h.a.b(null, new za2.g(), 3)), the value ob2.c0 returns for unknown modules
+    static final HookTarget GCS_EMPTY_MODULE = new HookTarget("za2.h", "f393361e");
+
     // Non-obfuscated classes that moved packages between releases
     static final String IN_APP_BROWSER_ACTIVITY = "com.linecorp.line.iab.browser.impl.InAppBrowserActivity";
     static final String WELCOME_FRAGMENT = "com.linecorp.line.registration.ui.fragment.WelcomeFragment";
