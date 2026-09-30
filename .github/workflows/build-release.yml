@@ -14,7 +14,7 @@ on:
         description: 'Branch, tag or commit to build'
         type: string
         required: true
-        default: 'support-line-26.14.0'
+        default: 'support-line-26.15.0'
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref || 'support-line-26.14.0' }}
+          ref: ${{ inputs.ref || 'support-line-26.15.0' }}
 
       - name: Set environments
         run: |
