@@ -27,7 +27,7 @@
     <string name="switch_android_secondary">最大バージョンに偽装</string>
     <string name="switch_archived">非表示にしたチャットの再表示を無効化</string>
     <string name="switch_unembed_options">設定を LINE に埋め込まない (設定は同期されません)</string>
-    <string name="switch_remove_voom">VOOM アイコンを削除</string>
+    <string name="switch_remove_commerce_tw">逛逛 (ショッピング) アイコンを削除</string>
     <string name="switch_remove_wallet">ウォレットアイコンを削除</string>
     <string name="switch_remove_news_or_call">ニュースまたは通話アイコンを削除</string>
     <string name="switch_distribute_evenly">ボトムバーのアイコンを均等に配置</string>

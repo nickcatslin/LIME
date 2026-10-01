@@ -20,12 +20,11 @@ public class RemoveIcons implements IHook {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Activity activity = (Activity) param.thisObject;
 
-                        if (limeOptions.removeVoom.checked) {
-                            int timelineResId = activity.getResources().getIdentifier("bnb_timeline", "id", activity.getPackageName());
-                            activity.findViewById(timelineResId).setVisibility(View.GONE);
+                        // "逛逛" (Taiwan commerce tab, COMMERCE_TW), which replaced VOOM in the bottom bar.
+                        if (limeOptions.removeCommerceTw.checked) {
+                            hideView(activity, "bnb_commerce_tw");
                             if (limeOptions.distributeEvenly.checked) {
-                                int timelineSpacerResId = activity.getResources().getIdentifier("bnb_timeline_spacer", "id", activity.getPackageName());
-                                activity.findViewById(timelineSpacerResId).setVisibility(View.GONE);
+                                hideView(activity, "bnb_commerce_tw_spacer");
                             }
                         }
 
@@ -69,5 +68,12 @@ public class RemoveIcons implements IHook {
                     }
                 }
         );
+    }
+
+    private static void hideView(Activity activity, String idName) {
+        int resId = activity.getResources().getIdentifier(idName, "id", activity.getPackageName());
+        if (resId == 0) return;
+        View view = activity.findViewById(resId);
+        if (view != null) view.setVisibility(View.GONE);
     }
 }

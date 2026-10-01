@@ -27,7 +27,7 @@
     <string name="switch_android_secondary">偽裝成最高版本</string>
     <string name="switch_archived">停用顯示隱藏聊天</string>
     <string name="switch_unembed_options">不要將選項嵌入 LINE（選項將不會同步）</string>
-    <string name="switch_remove_voom">刪除 VOOM 圖示</string>
+    <string name="switch_remove_commerce_tw">刪除逛逛圖示</string>
     <string name="switch_remove_wallet">刪除錢包圖示</string>
     <string name="switch_remove_news_or_call">刪除新聞或通話圖示</string>
     <string name="switch_distribute_evenly">均勻排列底欄的圖示</string>
