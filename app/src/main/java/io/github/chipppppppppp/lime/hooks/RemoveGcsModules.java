@@ -37,20 +37,17 @@ public class RemoveGcsModules implements IHook {
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (!limeOptions.removeAds.checked && !limeOptions.removeRecommendation.checked) return;
 
-        Object emptyModule;
-        try {
-            emptyModule = XposedHelpers.getStaticObjectField(
-                    loadPackageParam.classLoader.loadClass(Constants.GCS_EMPTY_MODULE.className),
-                    Constants.GCS_EMPTY_MODULE.methodName
-            );
-        } catch (Throwable ignored) {
-            return;
-        }
+        // Let a missing target propagate: Main logs it, so a LINE update that renames these classes
+        // shows up in the LSPosed log instead of silently bringing the ads back.
+        Object emptyModule = XposedHelpers.getStaticObjectField(
+                loadPackageParam.classLoader.loadClass(Constants.GCS_EMPTY_MODULE.className),
+                Constants.GCS_EMPTY_MODULE.methodName
+        );
 
         XC_MethodHook replaceWithEmptyModule = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                // a(String moduleKey, y82.k0 module, jb2.q pageState, h3.s composer)
+                // a(String moduleKey, module, pageState, composer)
                 if (param.args.length != 4 || param.args[1] == null) return;
                 String type = String.valueOf(XposedHelpers.callMethod(param.args[1], "getType"));
                 if (limeOptions.removeAds.checked && AD_MODULE_TYPES.contains(type)
@@ -60,6 +57,8 @@ public class RemoveGcsModules implements IHook {
             }
         };
 
+        // Hook every factory even if one is missing, then report the first failure.
+        Throwable failure = null;
         for (Constants.HookTarget target : new Constants.HookTarget[]{Constants.GCS_FLEX_MODULE_HOOK, Constants.GCS_VIEW_MODULE_HOOK}) {
             try {
                 XposedBridge.hookAllMethods(
@@ -67,8 +66,10 @@ public class RemoveGcsModules implements IHook {
                         target.methodName,
                         replaceWithEmptyModule
                 );
-            } catch (Throwable ignored) {
+            } catch (Throwable t) {
+                if (failure == null) failure = t;
             }
         }
+        if (failure != null) throw failure;
     }
 }

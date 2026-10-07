@@ -135,6 +135,10 @@ public class RemoveAds implements IHook {
             );
         }
 
+        // Install the stable-name hook before the obfuscated WebView target, so a LINE update that
+        // renames the WebView client does not also disable the Google Ad Manager banner hook.
+        hookMinorRegionAds(loadPackageParam);
+
         XposedHelpers.findAndHookMethod(
                 loadPackageParam.classLoader.loadClass(Constants.WEBVIEW_CLIENT_HOOK.className),
                 Constants.WEBVIEW_CLIENT_HOOK.methodName,
@@ -162,8 +166,6 @@ public class RemoveAds implements IHook {
                     }
                 }
         );
-
-        hookMinorRegionAds(loadPackageParam);
     }
 
     // Google Ad Manager banners shown outside Japan ("minor region" ads): the top banner on the
