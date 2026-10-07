@@ -19,10 +19,10 @@ LIME 依賴 LINE 經混淆後的類別名稱，LINE 每次改版幾乎都需要�
 
 | LIME | 對應的 LINE | 分支 |
 |---|---|---|
+| [v1.13.3](https://github.com/nickcatslin/LIME/releases/tag/v1.13.3) | 26.15.1 | `support-line-26.15.1` |
 | [v1.13.2](https://github.com/nickcatslin/LIME/releases/tag/v1.13.2) | 26.15.0 | `support-line-26.15.0` |
 | [v1.13.1](https://github.com/nickcatslin/LIME/releases/tag/v1.13.1) | 26.15.0 | `support-line-26.15.0` |
 | [v1.13.0](https://github.com/nickcatslin/LIME/releases/tag/v1.13.0) | 26.14.0 | `support-line-26.14.0` |
-| 尚未發布 | 26.15.1 | `support-line-26.15.1` |
 
 LINE 版本與 LIME 不符時，開啟 LINE 會跳出提示訊息。可以在設定中開啟「停止檢查 LINE 版本」關閉這個提示，但不相符的版本可能有部分功能失效。
 
@@ -216,7 +216,7 @@ LI**M**E
 - **2026-09（v1.13.0）**：從原專案 v1.12.1 接手，支援 LINE 26.14.0。修正 #239 的當機問題，新增主頁與聊天列表的廣告清除。
 - **2026-09（v1.13.1）**：支援 LINE 26.15.0。hook 安裝改為逐一容錯，避免單一 hook 失效時拖累其他功能。
 - **2026-10（v1.13.2）**：「刪除 VOOM 圖示」改為「刪除逛逛圖示」，對應台灣版 LINE 底部列的改版。
-- **2026-10（開發中）**：支援 LINE 26.15.1，修正主頁廣告卡片在新版中重新出現的問題。
+- **2026-10（v1.13.3）**：支援 LINE 26.15.1，修正主頁廣告卡片在新版中重新出現的問題。
 
 各版本的詳細內容請見 [Releases](https://github.com/nickcatslin/LIME/releases)。
 
