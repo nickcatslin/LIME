@@ -19,6 +19,7 @@ LIME 依賴 LINE 經混淆後的類別名稱，LINE 每次改版幾乎都需要�
 
 | LIME | 對應的 LINE | 分支 |
 |---|---|---|
+| [v1.13.4](https://github.com/nickcatslin/LIME/releases/tag/v1.13.4) | 26.16.0 | `support-line-26.16.0` |
 | [v1.13.3](https://github.com/nickcatslin/LIME/releases/tag/v1.13.3) | 26.15.1 | `support-line-26.15.1` |
 | [v1.13.2](https://github.com/nickcatslin/LIME/releases/tag/v1.13.2) | 26.15.0 | `support-line-26.15.0` |
 | [v1.13.1](https://github.com/nickcatslin/LIME/releases/tag/v1.13.1) | 26.15.0 | `support-line-26.15.0` |
@@ -217,6 +218,7 @@ LI**M**E
 - **2026-09（v1.13.1）**：支援 LINE 26.15.0。hook 安裝改為逐一容錯，避免單一 hook 失效時拖累其他功能。
 - **2026-10（v1.13.2）**：「刪除 VOOM 圖示」改為「刪除逛逛圖示」，對應台灣版 LINE 底部列的改版。
 - **2026-10（v1.13.3）**：支援 LINE 26.15.1，修正主頁廣告卡片在新版中重新出現的問題。
+- **2026-10（v1.13.4）**：支援 LINE 26.16.0。這版 LINE 的混淆名稱全部重新對應，修正主頁廣告卡片、內建瀏覽器廣告與不送已讀失效的問題。
 
 各版本的詳細內容請見 [Releases](https://github.com/nickcatslin/LIME/releases)。
 
