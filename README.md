@@ -121,40 +121,13 @@ LI**M**E
 
 ### Root 裝置（Magisk）
 
+本 fork 只支援已 Root 的裝置（Magisk + LSPosed）。
+
 1. 安裝 [**LSPosed（JingMatrix 版）**](https://github.com/JingMatrix/LSPosed/releases)
 2. 安裝 LI**N**E 與 LI**M**E 兩個 App
 3. 為了避免 Google Play 商店自動更新 LINE，請用 [**Update Locker**](https://github.com/Xposed-Modules-Repo/ru.mike.updatelocker) 或 [**Hide My Applist**](https://github.com/Dr-TSNG/Hide-My-Applist) 指定 LINE
    使用 [Aurora Store](https://auroraoss.com) 時請用黑名單功能
 4. 在 LSPosed 的模組列表中進入 LIME，勾選 <kbd>啟用模組</kbd> 並勾選 LINE
-
-### 非 Root 裝置
-
-> [!WARNING]
-> 非 Root 裝置有以下問題：
-> - 無法用 Google 帳號（雲端硬碟）還原聊天記錄
->   （用[這個方法](https://github.com/Chipppppppppp/LIME/issues/50#issuecomment-2174842592)登入則可以）
-> - 來電與撥出時不會響鈴
->   LIME 有模擬鈴聲的功能
-> - 有來電時會當機
-> - 無法購買代幣
-> - LINE Pay 的部分功能無法使用
-> - 無法在 Wear OS（智慧手錶）上使用
-
-1. 安裝 [**LSPatch**](https://github.com/LSPosed/LSPatch)
-   ※由 fork 開發的 [**NPatch**](https://github.com/HSSkyBoy/NPatch) 可能會有問題。
-   如果用 **LSPosed 官方**的 LSPatch 修補後 App 會當機，改用 fork 版的 [**JingMatrix LSPatch**](https://github.com/JingMatrix/LSPatch/) 修補，有可能就能正常運作。
-2. 開啟 **LSPatch** App，依序點 <kbd>管理</kbd> > 右下角的 <kbd>＋</kbd> > <kbd>從儲存空間選擇 apk</kbd> > 選擇剛才下載的 LI**N**E APK > <kbd>整合</kbd> → <kbd>嵌入模組</kbd> > <kbd>選擇已安裝的應用程式</kbd> > 勾選 LI**M**E 並按 <kbd>＋</kbd> > <kbd>開始修補</kbd>
-
-※用[這個方法](https://github.com/Chipppppppppp/LIME/issues/50#issuecomment-2174842592)似乎可以還原聊天記錄。
-
-> [!TIP]
-> 出現 <kbd>選擇目錄</kbd> 時，按 <kbd>OK</kbd> 開啟檔案選擇器，在任意目錄下建立資料夾，再按 <kbd>使用這個資料夾</kbd> > <kbd>允許</kbd>。
-
-3. 有使用 [**Shizuku**](https://github.com/RikkaApps/Shizuku) 的話，按 <kbd>安裝</kbd> 繼續。
-   沒有使用的話，請改用檔案管理員等其他 App 安裝。
-
-> [!IMPORTANT]
-> 如果已經安裝了從 Play 商店下載的 LINE，簽章會衝突，請先解除安裝。
 
 ## 多裝置登入
 
@@ -169,7 +142,7 @@ LI**M**E
 
 ※若其中一台裝置是 iOS，可能會因為 Letter Sealing 失敗而收不到訊息。請依照[這個方法](https://github.com/Chipppppppppp/LIME/issues/88#issuecomment-2012001059)重新產生 Letter Sealing 金鑰（金鑰可以在任一聊天右上角的 <kbd>☰</kbd> > <kbd>設定</kbd> > <kbd>加密金鑰</kbd> 查看）。
 
-- 優點：訊息同步沒有問題、LIME 只需裝在其中一台、非 Root 也可以使用
+- 優點：訊息同步沒有問題、LIME 只需裝在其中一台
 - 缺點：無法在 3 台以上的裝置登入、第 2 台裝置不會顯示服務圖示
 
 #### 步驟
@@ -212,6 +185,7 @@ LI**M**E
 - 「刪除推薦」也會隱藏台灣版主頁的推薦內容，例如「推薦貼圖」。
 - 底部列的「刪除 VOOM 圖示」改為「刪除逛逛圖示」。台灣版 LINE 已經用「逛逛」取代了 VOOM 分頁。
 - 某一個功能的 hook 失效時，不再連帶讓其他功能一起失效，並會在 LSPosed 日誌留下 `LIME: … failed to hook` 方便追查。
+- 不再提供非 Root 裝置（LSPatch）的安裝方式。LSPatch 已停止維護，而且修補後的 LINE 簽章改變，容易被 LINE 偵測與阻擋。
 
 ## 本 fork 歷程
 
