@@ -17,14 +17,14 @@ LIME 是一個用來清理 [**LINE**](https://line.me) 的 Xposed 模組，可�
 
 LIME 依賴 LINE 經混淆後的類別名稱，LINE 每次改版幾乎都需要重新對應。請務必使用與 LIME 版本相符的 LINE。
 
-| LIME | 對應的 LINE | 分支 |
+| LIME | 對應的 LINE | 原始碼 |
 |---|---|---|
-| [v1.13.5](https://github.com/nickcatslin/LIME/releases/tag/v1.13.5) | 26.17.0 | `support-line-26.17.0` |
-| [v1.13.4](https://github.com/nickcatslin/LIME/releases/tag/v1.13.4) | 26.16.0 | `support-line-26.16.0` |
-| [v1.13.3](https://github.com/nickcatslin/LIME/releases/tag/v1.13.3) | 26.15.1 | `support-line-26.15.1` |
-| [v1.13.2](https://github.com/nickcatslin/LIME/releases/tag/v1.13.2) | 26.15.0 | `support-line-26.15.0` |
-| [v1.13.1](https://github.com/nickcatslin/LIME/releases/tag/v1.13.1) | 26.15.0 | `support-line-26.15.0` |
-| [v1.13.0](https://github.com/nickcatslin/LIME/releases/tag/v1.13.0) | 26.14.0 | `support-line-26.14.0` |
+| [v1.13.5](https://github.com/nickcatslin/LIME/releases/tag/v1.13.5) | 26.17.0 | [`v1.13.5`](https://github.com/nickcatslin/LIME/tree/v1.13.5) |
+| [v1.13.4](https://github.com/nickcatslin/LIME/releases/tag/v1.13.4) | 26.16.0 | [`v1.13.4`](https://github.com/nickcatslin/LIME/tree/v1.13.4) |
+| [v1.13.3](https://github.com/nickcatslin/LIME/releases/tag/v1.13.3) | 26.15.1 | [`v1.13.3`](https://github.com/nickcatslin/LIME/tree/v1.13.3) |
+| [v1.13.2](https://github.com/nickcatslin/LIME/releases/tag/v1.13.2) | 26.15.0 | [`v1.13.2`](https://github.com/nickcatslin/LIME/tree/v1.13.2) |
+| [v1.13.1](https://github.com/nickcatslin/LIME/releases/tag/v1.13.1) | 26.15.0 | [`v1.13.1`](https://github.com/nickcatslin/LIME/tree/v1.13.1) |
+| [v1.13.0](https://github.com/nickcatslin/LIME/releases/tag/v1.13.0) | 26.14.0 | [`v1.13.0`](https://github.com/nickcatslin/LIME/tree/v1.13.0) |
 
 LINE 版本與 LIME 不符時，開啟 LINE 會跳出提示訊息。可以在設定中開啟「停止檢查 LINE 版本」關閉這個提示，但不相符的版本可能有部分功能失效。
 
