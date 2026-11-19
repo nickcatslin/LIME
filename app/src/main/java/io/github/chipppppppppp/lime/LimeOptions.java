@@ -13,7 +13,7 @@ public class LimeOptions {
         }
     }
 
-    public Option removeVoom = new Option("remove_voom", R.string.switch_remove_voom, true);
+    public Option removeCommerceTw = new Option("remove_commerce_tw", R.string.switch_remove_commerce_tw, true);
     public Option removeWallet = new Option("remove_wallet", R.string.switch_remove_wallet, true);
     public Option removeNewsOrCall = new Option("remove_news_or_call", R.string.switch_remove_news_or_call, true);
     public Option distributeEvenly = new Option("distribute_evenly", R.string.switch_distribute_evenly, true);
@@ -41,7 +41,7 @@ public class LimeOptions {
     public Option NaviColor = new Option("NaviColor", R.string.NaviColor, false);
 
     public Option[] options = {
-            removeVoom,
+            removeCommerceTw,
             removeWallet,
             removeNewsOrCall,
             distributeEvenly,

@@ -8,6 +8,7 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -32,6 +33,7 @@ import io.github.chipppppppppp.lime.hooks.ReadChecker;
 import io.github.chipppppppppp.lime.hooks.RedirectWebView;
 import io.github.chipppppppppp.lime.hooks.RemoveAds;
 import io.github.chipppppppppp.lime.hooks.RemoveFlexibleContents;
+import io.github.chipppppppppp.lime.hooks.RemoveGcsModules;
 import io.github.chipppppppppp.lime.hooks.RemoveIconLabels;
 import io.github.chipppppppppp.lime.hooks.RemoveIcons;
 import io.github.chipppppppppp.lime.hooks.RemoveReplyMute;
@@ -61,6 +63,7 @@ public class Main implements IXposedHookLoadPackage, IXposedHookInitPackageResou
             new RemoveIconLabels(),
             new RemoveAds(),
             new RemoveFlexibleContents(),
+            new RemoveGcsModules(),
             new RemoveReplyMute(),
             new RedirectWebView(),
             new PreventMarkAsRead(),
@@ -94,7 +97,13 @@ public class Main implements IXposedHookLoadPackage, IXposedHookInitPackageResou
         }
 
         for (IHook hook : hooks) {
-            hook.hook(limeOptions, loadPackageParam);
+            try {
+                hook.hook(limeOptions, loadPackageParam);
+            } catch (Throwable t) {
+                // A hook whose target no longer exists (typically after a LINE update) must not
+                // prevent the remaining hooks from being installed.
+                XposedBridge.log("LIME: " + hook.getClass().getSimpleName() + " failed to hook: " + t);
+            }
         }
     }
 

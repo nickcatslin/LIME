@@ -10,32 +10,36 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import io.github.chipppppppppp.lime.LimeOptions;
 
 public class BlockTracking implements IHook {
+    private static final Set<String> BLOCKED_REQUESTS = new HashSet<>(Arrays.asList(
+            "noop",
+            "reportAbuseEx",
+            "reportDeviceState",
+            "reportLocation",
+            "reportNetworkStatus",
+            "reportProfile",
+            "reportPushRecvReports",
+            "reportSetting"
+    ));
+
     @Override
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (!limeOptions.blockTracking.checked) return;
 
-        XposedBridge.hookAllMethods(
-                loadPackageParam.classLoader.loadClass(Constants.REQUEST_HOOK.className),
-                Constants.REQUEST_HOOK.methodName,
-                new XC_MethodHook() {
-                    final Set<String> requests = new HashSet<>(Arrays.asList(
-                            "noop",
-                            "reportAbuseEx",
-                            "reportDeviceState",
-                            "reportLocation",
-                            "reportNetworkStatus",
-                            "reportProfile",
-                            "reportPushRecvReports",
-                            "reportSetting"
-                    ));
-
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        if (requests.contains(param.args[0].toString())) {
-                            param.setResult(null);
-                        }
-                    }
+        // Every Thrift call is sendBase(name, args) followed by receiveBase(name, result).
+        // Skipping only sendBase leaves the transport without a receiveSource, and the
+        // subsequent receiveBase then crashes LINE with "receiveSource is not set." (issue #239).
+        // Both halves must be skipped together so the caller sees an empty, exception-free result.
+        XC_MethodHook skipBlockedRequest = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (BLOCKED_REQUESTS.contains(String.valueOf(param.args[0]))) {
+                    param.setResult(null);
                 }
-        );
+            }
+        };
+
+        Class<?> serviceClient = loadPackageParam.classLoader.loadClass(Constants.REQUEST_HOOK.className);
+        XposedBridge.hookAllMethods(serviceClient, Constants.REQUEST_HOOK.methodName, skipBlockedRequest);
+        XposedBridge.hookAllMethods(serviceClient, Constants.RESPONSE_HOOK.methodName, skipBlockedRequest);
     }
 }

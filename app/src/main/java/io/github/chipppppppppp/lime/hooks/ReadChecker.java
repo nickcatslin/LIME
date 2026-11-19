@@ -322,11 +322,20 @@ public class ReadChecker implements IHook {
         try {
             XposedBridge.hookAllMethods(
                     loadPackageParam.classLoader.loadClass(Constants.NOTIFICATION_READ_HOOK.className),
-                    "invokeSuspend",
+                    Constants.NOTIFICATION_READ_HOOK.methodName,
                     new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            String paramValue = param.args[0].toString();
+                            // The Operation (thrift struct) may not be the first argument; find it by content
+                            String paramValue = null;
+                            for (Object arg : param.args) {
+                                if (arg == null) continue;
+                                String s = arg.toString();
+                                if (s.contains("type:NOTIFIED_READ_MESSAGE")) {
+                                    paramValue = s;
+                                    break;
+                                }
+                            }
                             // XposedBridge.log(paramValue);
                             if (appContext == null) {
                                 // XposedBridge.log("appContext is null!");
