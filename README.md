@@ -19,6 +19,7 @@ LIME 依賴 LINE 經混淆後的類別名稱，LINE 每次改版幾乎都需要�
 
 | LIME | 對應的 LINE | 原始碼 |
 |---|---|---|
+| [v1.13.7](https://github.com/nickcatslin/LIME/releases/tag/v1.13.7) | 26.19.0 | [`v1.13.7`](https://github.com/nickcatslin/LIME/tree/v1.13.7) |
 | [v1.13.6](https://github.com/nickcatslin/LIME/releases/tag/v1.13.6) | 26.18.2 | [`v1.13.6`](https://github.com/nickcatslin/LIME/tree/v1.13.6) |
 | [v1.13.5](https://github.com/nickcatslin/LIME/releases/tag/v1.13.5) | 26.17.0 | [`v1.13.5`](https://github.com/nickcatslin/LIME/tree/v1.13.5) |
 | [v1.13.4](https://github.com/nickcatslin/LIME/releases/tag/v1.13.4) | 26.16.0 | [`v1.13.4`](https://github.com/nickcatslin/LIME/tree/v1.13.4) |
@@ -201,6 +202,7 @@ LI**M**E
 - **2026-10（v1.13.4）**：支援 LINE 26.16.0。這版 LINE 的混淆名稱全部重新對應，修正主頁廣告卡片、內建瀏覽器廣告與不送已讀失效的問題。
 - **2026-10（v1.13.5）**：支援 LINE 26.17.0。除了重新對應改名的類別，也修正 Thrift 通訊方法名稱位移造成擋追蹤、不送已讀、防收回等功能靜默失效的問題。
 - **2026-11（v1.13.6）**：支援 LINE 26.18.2。重新對應這版改名的全部混淆類別，修正主頁廣告卡片重新出現的問題。
+- **2026-11（v1.13.7）**：支援 LINE 26.19.0，修正 Thrift 用戶端類別搬移造成多項功能靜默失效的問題。移除 LSPatch 專用功能與死碼，修正來電鈴聲停不下來、擋追蹤漏擋 `reportSettings` 的問題。
 
 各版本的詳細內容請見 [Releases](https://github.com/nickcatslin/LIME/releases)。
 
