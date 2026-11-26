@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import io.github.chipppppppppp.lime.LimeOptions;
@@ -23,13 +22,13 @@ import io.github.chipppppppppp.lime.LimeOptions;
 public class AutomaticBackup implements IHook {
     @Override
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+        if (!limeOptions.automaticBackup.checked) return;
 
         XposedHelpers.findAndHookMethod("jp.naver.line.android.activity.schemeservice.LineSchemeServiceActivity",
                 loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         Intent intent = ((Activity) param.thisObject).getIntent();
-                        XposedBridge.log("onCreate Intent action: " + intent.getAction());
                         handleIntent(intent, param.thisObject);
                     }
                 });

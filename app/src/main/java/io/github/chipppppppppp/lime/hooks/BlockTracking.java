@@ -18,7 +18,7 @@ public class BlockTracking implements IHook {
             "reportNetworkStatus",
             "reportProfile",
             "reportPushRecvReports",
-            "reportSetting"
+            "reportSettings"
     ));
 
     @Override

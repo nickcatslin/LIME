@@ -4,59 +4,82 @@ import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import io.github.chipppppppppp.lime.LimeOptions;
 
+/**
+ * Plays the system ringtone when an incoming LINE call arrives, and stops it when the call screen
+ * opens, the caller cancels, or after a safety timeout.
+ */
 public class Ringtone implements IHook {
-    private android.media.Ringtone ringtone = null;
-    private boolean isPlaying = false;
+    // Operation.toString() renders the type as ", type:<ENUM>, reqSeq:...".
+    private static final String RECEIVED_CALL = "type:NOTIFIED_RECEIVED_CALL,";
+    private static final String CANCEL_CALL = "type:CANCEL_CALL,";
+    // LINE gives up on an unanswered call well before this, so the ringtone never outlives it.
+    private static final long MAX_RING_MS = 60_000;
+
+    private static android.media.Ringtone ringtone = null;
+    private static final Handler handler = new Handler(Looper.getMainLooper());
+    private static final Runnable stopRunnable = Ringtone::stop;
 
     @Override
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-
         if (!limeOptions.callTone.checked) return;
 
         XposedBridge.hookAllMethods(
                 loadPackageParam.classLoader.loadClass(Constants.RESPONSE_HOOK.className),
                 Constants.RESPONSE_HOOK.methodName,
                 new XC_MethodHook() {
-
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        String paramValue = param.args[1].toString();
-
-                        if (paramValue.contains("type:NOTIFIED_RECEIVED_CALL,") && !isPlaying) {
-                            Context context = AndroidAppHelper.currentApplication().getApplicationContext();
-                            if (context != null) {
-                                Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                                ringtone = RingtoneManager.getRingtone(context, ringtoneUri);
-                                ringtone.play();
-                                isPlaying = true;
-                            }
-
-                            if (paramValue.contains("RESULT=REJECTED,") ||
-                                    paramValue.contains("RESULT=REJECTED,")) {
-                                if (ringtone != null && ringtone.isPlaying()) {
-                                    ringtone.stop();
-                                    isPlaying = false;
-                                }
-                            }
+                        if (param.args[1] == null) return;
+                        String response = param.args[1].toString();
+                        // One sync response can carry both operations; the later one wins.
+                        int received = response.lastIndexOf(RECEIVED_CALL);
+                        int cancelled = response.lastIndexOf(CANCEL_CALL);
+                        if (received > cancelled) {
+                            handler.post(Ringtone::play);
+                        } else if (cancelled >= 0) {
+                            handler.post(Ringtone::stop);
                         }
                     }
                 });
 
-        Class<?> voIPBaseFragmentClass = loadPackageParam.classLoader.loadClass("com.linecorp.voip2.common.base.VoIPBaseFragment");
-        XposedBridge.hookAllMethods(voIPBaseFragmentClass, "onCreate", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (ringtone != null && ringtone.isPlaying()) {
-                    ringtone.stop();
-                    isPlaying = false;
-                }
-            }
-        });
+        // VoIPBaseFragment declares onAttach (onCreate is only inherited, so hooking it by name
+        // installs nothing). Every call screen attaches one, i.e. the user has opened the call.
+        XposedBridge.hookAllMethods(
+                loadPackageParam.classLoader.loadClass("com.linecorp.voip2.common.base.VoIPBaseFragment"),
+                "onAttach",
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        handler.post(Ringtone::stop);
+                    }
+                });
+    }
+
+    private static void play() {
+        if (ringtone != null && ringtone.isPlaying()) return;
+        Context context = AndroidAppHelper.currentApplication();
+        if (context == null) return;
+        Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        ringtone = RingtoneManager.getRingtone(context, ringtoneUri);
+        if (ringtone == null) return;
+        ringtone.play();
+        handler.removeCallbacks(stopRunnable);
+        handler.postDelayed(stopRunnable, MAX_RING_MS);
+    }
+
+    private static void stop() {
+        handler.removeCallbacks(stopRunnable);
+        if (ringtone != null && ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+        ringtone = null;
     }
 }

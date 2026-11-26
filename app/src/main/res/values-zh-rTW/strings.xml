@@ -52,7 +52,8 @@
     <string name="modify_response">修改回應</string>
     <string name="button_copy">複製</string>
     <string name="button_paste">貼上</string>
-    <string name="call_tone">LSPatch 通知鈴聲</string>
+    <string name="call_tone">來電時播放鈴聲</string>
+    <string name="switch_automatic_backup">允許透過分享指令備份聊天記錄</string>
 
     <!-- Menu -->
     <string name="switch_keep_unread">保持未讀</string>
@@ -78,7 +79,6 @@
     <string name="no_get_restart_app">無法正常獲取，請重新啟動應用程式</string>
 
     <!-- TODO: Fix name -->
-    <string name="switch_KeepUnreadLSpatch">顯示 LSPatch 的「標記為未讀」開關</string>
     <string name="NaviColor">將導航列的顏色設為黑色</string>
     <string name="ReadChecker">確認群組的已讀者</string>
 </resources>

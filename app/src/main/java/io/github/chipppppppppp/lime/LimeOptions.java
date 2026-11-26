@@ -33,12 +33,12 @@ public class LimeOptions {
     public Option sendMuteMessage = new Option("mute_message", R.string.switch_send_mute_message, false);
     public Option ReadChecker = new Option("ReadChecker", R.string.ReadChecker, false);
     public Option removeKeepUnread = new Option("remove_keep_unread", R.string.switch_remove_keep_unread, false);
-    public Option KeepUnreadLSpatch = new Option("Keep_UnreadLSpatch", R.string.switch_KeepUnreadLSpatch, false);
     public Option blockTracking = new Option("block_tracking", R.string.switch_block_tracking, false);
     public Option stopVersionCheck = new Option("stop_version_check", R.string.switch_stop_version_check, false);
     public Option outputCommunication = new Option("output_communication", R.string.switch_output_communication, false);
     public Option callTone = new Option("call_tone", R.string.call_tone, false);
     public Option NaviColor = new Option("NaviColor", R.string.NaviColor, false);
+    public Option automaticBackup = new Option("automatic_backup", R.string.switch_automatic_backup, false);
 
     public Option[] options = {
             removeCommerceTw,
@@ -61,11 +61,11 @@ public class LimeOptions {
             sendMuteMessage,
             ReadChecker,
             removeKeepUnread,
-            KeepUnreadLSpatch,
             blockTracking,
             stopVersionCheck,
             outputCommunication,
             callTone,
-            NaviColor
+            NaviColor,
+            automaticBackup
     };
 }

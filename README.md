@@ -70,8 +70,9 @@ LINE 版本與 LIME 不符時，開啟 LINE 會跳出提示訊息。可以在設
   - 傳送時選擇「一般訊息」就會照常通知對方
 - 讓隱藏的聊天不再重新顯示
 - 自動備份聊天記錄（參考：https://github.com/areteruhiro/LIMEs/issues/10）
+  - 需先在設定中開啟「允許透過分享指令備份聊天記錄」
 - 阻擋追蹤通訊
-  - 阻擋 `noop`、`reportAbuseEx`、`reportDeviceState`、`reportLocation`、`reportNetworkStatus`、`reportProfile`、`reportPushRecvReports`、`reportSetting`
+  - 阻擋 `noop`、`reportAbuseEx`、`reportDeviceState`、`reportLocation`、`reportNetworkStatus`、`reportProfile`、`reportPushRecvReports`、`reportSettings`
 - 將通訊內容輸出到日誌
 - 修改通訊內容
   - 可以用 JavaScript 修改通訊內容（見下文）
@@ -187,6 +188,9 @@ LI**M**E
 - 底部列的「刪除 VOOM 圖示」改為「刪除逛逛圖示」。台灣版 LINE 已經用「逛逛」取代了 VOOM 分頁。
 - 某一個功能的 hook 失效時，不再連帶讓其他功能一起失效，並會在 LSPosed 日誌留下 `LIME: … failed to hook` 方便追查。
 - 不再提供非 Root 裝置（LSPatch）的安裝方式。LSPatch 已停止維護，而且修補後的 LINE 簽章改變，容易被 LINE 偵測與阻擋。
+- 移除 LSPatch 專用的「標記為未讀」開關；「LSPatch 通知鈴聲」改為「來電時播放鈴聲」，並修正鈴聲響起後停不下來的問題。
+- 修正「阻擋追蹤通訊」的清單把 `reportSettings` 誤植為 `reportSetting`，該通訊先前一直沒被擋下。
+- 自動備份改為需要手動開啟，不再預設常駐。
 
 ## 本 fork 歷程
 

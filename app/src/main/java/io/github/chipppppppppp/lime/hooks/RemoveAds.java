@@ -4,15 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -22,8 +19,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import io.github.chipppppppppp.lime.LimeOptions;
 
 public class RemoveAds implements IHook {
-
-    static final List<String> adClassNames = new ArrayList<>(List.of());
 
     @Override
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -105,35 +100,11 @@ public class RemoveAds implements IHook {
                         View view = (View) param.args[0];
                         String className = view.getClass().getName();
                         if (className.contains("Ad")) {
-                            if (!adClassNames.contains(className)) {
-                                adClassNames.add(className);
-                            }
                             view.setVisibility(View.GONE);
                         }
                     }
                 }
         );
-
-        for (String adClassName : adClassNames) {
-            XposedBridge.hookAllConstructors(
-                    loadPackageParam.classLoader.loadClass(adClassName),
-                    new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            View view = (View) param.thisObject;
-                            view.setVisibility(View.GONE);
-                            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    if (view.getVisibility() != View.GONE) {
-                                        view.setVisibility(View.GONE);
-                                    }
-                                }
-                            });
-                        }
-                    }
-            );
-        }
 
         // Install the stable-name hook before the obfuscated WebView target, so a LINE update that
         // renames the WebView client does not also disable the Google Ad Manager banner hook.

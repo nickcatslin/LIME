@@ -21,7 +21,6 @@ import io.github.chipppppppppp.lime.hooks.Constants;
 import io.github.chipppppppppp.lime.hooks.EmbedOptions;
 import io.github.chipppppppppp.lime.hooks.IHook;
 import io.github.chipppppppppp.lime.hooks.KeepUnread;
-import io.github.chipppppppppp.lime.hooks.KeepUnreadLSpatch;
 import io.github.chipppppppppp.lime.hooks.ModifyRequest;
 import io.github.chipppppppppp.lime.hooks.ModifyResponse;
 import io.github.chipppppppppp.lime.hooks.NaviColor;
@@ -74,7 +73,6 @@ public class Main implements IXposedHookLoadPackage, IXposedHookInitPackageResou
             new Archived(),
             new Ringtone(),
             new UnsentCap(),
-            new KeepUnreadLSpatch(),
             new NaviColor(),
             new AutomaticBackup(),
             new ReadChecker(),
