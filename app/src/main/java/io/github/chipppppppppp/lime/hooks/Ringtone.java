@@ -24,8 +24,15 @@ public class Ringtone implements IHook {
     private static final long MAX_RING_MS = 60_000;
 
     private static android.media.Ringtone ringtone = null;
-    private static final Handler handler = new Handler(Looper.getMainLooper());
+    // Created lazily: LSPosed loads this class while the process is still being specialised from
+    // zygote, before the main Looper exists, and a static Handler there would abort the whole module.
+    private static Handler handler = null;
     private static final Runnable stopRunnable = Ringtone::stop;
+
+    private static synchronized Handler handler() {
+        if (handler == null) handler = new Handler(Looper.getMainLooper());
+        return handler;
+    }
 
     @Override
     public void hook(LimeOptions limeOptions, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -43,9 +50,9 @@ public class Ringtone implements IHook {
                         int received = response.lastIndexOf(RECEIVED_CALL);
                         int cancelled = response.lastIndexOf(CANCEL_CALL);
                         if (received > cancelled) {
-                            handler.post(Ringtone::play);
+                            handler().post(Ringtone::play);
                         } else if (cancelled >= 0) {
-                            handler.post(Ringtone::stop);
+                            handler().post(Ringtone::stop);
                         }
                     }
                 });
@@ -58,7 +65,7 @@ public class Ringtone implements IHook {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        handler.post(Ringtone::stop);
+                        handler().post(Ringtone::stop);
                     }
                 });
     }
@@ -71,12 +78,12 @@ public class Ringtone implements IHook {
         ringtone = RingtoneManager.getRingtone(context, ringtoneUri);
         if (ringtone == null) return;
         ringtone.play();
-        handler.removeCallbacks(stopRunnable);
-        handler.postDelayed(stopRunnable, MAX_RING_MS);
+        handler().removeCallbacks(stopRunnable);
+        handler().postDelayed(stopRunnable, MAX_RING_MS);
     }
 
     private static void stop() {
-        handler.removeCallbacks(stopRunnable);
+        handler().removeCallbacks(stopRunnable);
         if (ringtone != null && ringtone.isPlaying()) {
             ringtone.stop();
         }
